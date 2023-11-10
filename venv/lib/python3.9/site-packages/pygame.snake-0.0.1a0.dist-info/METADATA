@@ -1,0 +1,145 @@
+Metadata-Version: 2.1
+Name: pygame.snake
+Version: 0.0.1a0
+Summary: The super-simple pygame framework.
+Home-page: https://github.com/Bottersnike/snake
+Author: Bottersnike
+Author-email: bottersnike237@gmail.com
+License: MIT
+Project-URL: Wiki, https://github.com/Bottersnike/Snake/wiki
+Project-URL: Source, https://github.com/Bottersnike/Snake
+Keywords: engine python pygame
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Other Environment
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Games/Entertainment
+Description-Content-Type: text/markdown
+Requires-Dist: pygame
+
+# pygame.snake
+
+_Snake supports scenes through the `@game.scene` decorator. This
+README doesn't cover them though. Despite that, snake's scenes are
+awesome, look out for the documentation for them when I make it!_
+
+---
+
+Snake has been designed with the absolute beginner in mind.
+None of that fussing around with `pygame.event.get()`,
+`pygame.display.set_mode()`, `pygame.image.load()`, etc.
+
+In fact, you can make a game in snake without `import pygame`
+anywhere! A lot of the following code snippets are actually entire
+snake projects. It's that simple to use.
+
+```py
+import snake
+
+game = snake.Game()
+
+while True:
+    game.next_frame()
+    game.assets.player.stamp((0, 0))
+```
+
+`game.assets`? That's the `assets/` folder automatically loaded
+with file types detected and filtered into the right things for you.
+
+`game.assets.player` could have been `assets/player.png`. It might
+also have been `assets/player.jpg` or any other image format. Snake
+doesn't care.
+
+That's boring. Let's get some user input going on:
+
+```py
+import snake
+
+game = snake.Game()
+
+while True:
+    events = game.next_frame()
+
+    if events.keys.space:
+        print("Space is pressed!")
+    else:
+        print("Space isn't pressed")
+```
+
+That was easy. Notice how the keyboard was dropped into `events.keys`?
+Let's have a look at mouse input:
+
+```py
+print("Mouse is at " + str(events.mouse.pos))
+```
+
+Nice. I wonder if we can scroll?
+
+```py
+if events.scroll.up:
+    print("Scroll up")
+```
+
+Oh. Nice. My game's a little more advanced though. I'm going to need
+some sprites. No worries.
+
+```py
+player = game.sprite(game.assets.player)
+
+while True:
+    game.next_frame()
+    player.x += 1
+```
+
+Too easy. Onto fonts:
+
+```py
+label = game.sprite(game.assets.my_font)
+
+while True:
+    events = game.next_frame()
+
+    if events.keys.space:
+        label.text = "Space is pressed"
+    else:
+        label.text = "Space is not pressed"
+```
+
+Remember that `game.assets.my_font` is going to be
+`assets/my_font.ttf`, so make sure you have a font file there.
+
+Quitting isn't even something that needs to be covered. It's handled
+implicitly for you. No problems there.
+
+Now at the moment everything has been working with the origin, but
+that's boring. Let's add an FPS counter in the top right corner.
+
+```py
+counter = game.sprite(game.assets.my_font)
+counter.stick = game.NE
+
+while True:
+    game.next_frame()
+
+    counter.text = str(round(game.fps, 2))
+```
+
+We've got a few new things here. The important part is
+`counter.stick` which tells snake where to place the sprite.
+North-east is the top right which is what we want. The default is
+`game.CENTRE`. The other new thing is `game.fps`. No surprises there;
+it's the FPS.
+
+I don't like the fact the text is mushed right against the side of the
+window though. Let's fix that:
+
+```py
+counter = game.sprite(game.assets.my_font, x=32, y=32)
+```
+
+Now we're offsetting it by 32 pixels in both directions. Easy as
+anything.
+
+
